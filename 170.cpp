@@ -2,7 +2,9 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <unordered_map>
 #include <chrono>
+
 using namespace std;
 
 unsigned int nodes = 0;
@@ -245,12 +247,32 @@ int misplacedTile(vector<int>initial) {
 //Manhattan Distance Heuristic
 int calculateManhattanDistance(vector<int>initial) {
     int score = 0;
+    unordered_map<int, pair<int,int>> coordinates; //Represents row, column for each index 
+    coordinates[0] = pair<int,int>(1,1);
+    coordinates[1] = pair<int,int>(1,2);
+    coordinates[2] = pair<int,int>(1,3);
+    coordinates[3] = pair<int,int>(2,1);
+    coordinates[4] = pair<int,int>(2,2);
+    coordinates[5] = pair<int,int>(2,3);
+    coordinates[6] = pair<int,int>(3,1);
+    coordinates[7] = pair<int,int>(3,2);
+    coordinates[8] = pair<int,int>(3,3);
+
+    int incorrectRow;
+    int incorrectColumn;
+    int correctRow;
+    int correctColumn;
     if (solved(initial)) //If solved puzzle, 0 manhatten distance
         return 0;
     for (unsigned int i = 0; i < initial.size(); ++i) {
         if (initial.at(i) != 9) { //Skip empty tile
-            if (initial.at(i) != (i + 1)) //If the tile is not in the correct spot
-                cout << "hi" << endl; //Calculate distance//score += 
+            if (initial.at(i) != (i + 1)){ //If the tile is not in the correct spot
+                incorrectRow = coordinates[i].first; //Current row
+                incorrectColumn = coordinates[i].second; //Current column
+                correctRow = coordinates[initial.at(i)-1].first; //Tile's correct position row
+                correctColumn = coordinates [initial.at(i)-1].second; //Tile's corret position column
+                score += abs(correctRow - incorrectRow) + abs(correctColumn - incorrectColumn); //Calculate distance
+            }
         }
     }
     return score;
