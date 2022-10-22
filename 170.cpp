@@ -78,10 +78,14 @@ vector<int> moveLeft(vector<int> vect, int blank) {
 int uniformSearch(vector<int>initial) {
     queue<Node> q; //Queue holding nodes
     vector<vector<int>> repeatedStates; //Vector holding repeated states
+    //nodes = MAKE-QUEUE(MAKE-NODE(problem.INITIAL_STATE))
     q.push(Node(initial,0)); //Initial state with depth of 0 pushed into queue
+    //loop do
     while (true) {
+        //if EMPTY(nodes) then return "failure"
         if (q.empty()) //Empty queue means solution not found
             return -1; //Return failure
+        //if problem.GOAL-TEST(node STATE) suceeds then return node
         else if (solved(q.front().puzzle)){  //If goal state is reached
             printVector(q.front().puzzle);
             return q.front().depth; //Return depth of solution if found
@@ -96,6 +100,8 @@ int uniformSearch(vector<int>initial) {
         
             int nodeDepth = q.front().depth;
             auto blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
+
+            //nodes = QUEUEING-FUNCTION(nodes, EXPAND(nodes, problem.OPERATORS))
             if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.front().depth + 1));
@@ -139,6 +145,7 @@ int uniformSearch(vector<int>initial) {
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.front().depth + 1));
             }
         }
+    //node = REMOVE-FRONT(nodes)
     q.pop();  // Remove front node 
     }
 }
@@ -159,18 +166,23 @@ int calculateMisplacedTile(vector<int>initial) {
 
 //Misplaced Tile Heuristic
 int misplacedTile(vector<int>initial) {
+    //nodes = MAKE-QUEUE(MAKE-NODE(problem.INITIAL_STATE))
     priority_queue<Node, vector<Node>, greater<Node>> q; //Priority Queue holding nodes, sorted by heuristic value (lowest to highest)
     vector<vector<int>> repeatedStates; //Vector holding repeated states
     q.push(Node(initial,0, calculateMisplacedTile(initial))); //Initial state with depth of 0 pushed into queue
+    //loop do
     while (true) {
+        //if EMPTY(nodes) then return "failure"
         if (q.empty()) //Empty queue means solution not found
             return -1; //Return failure
+        //if problem.GOAL-TEST(node STATE) suceeds then return node
         else if (solved(q.top().puzzle)){  //If goal state is reached
             printVector(q.top().puzzle);
             return q.top().depth; //Return depth of solution if found
         }
 
         vector<int> currentPuzzle = q.top().puzzle; //Current puzzle 
+        //node = REMOVE-FRONT(nodes)
         q.pop(); //Remove current puzzle node
 
         if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
@@ -182,6 +194,8 @@ int misplacedTile(vector<int>initial) {
             repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
 
             int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
+
+            //nodes = QUEUEING-FUNCTION(nodes, EXPAND(nodes, problem.OPERATORS))
             if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition))));
@@ -229,8 +243,94 @@ int misplacedTile(vector<int>initial) {
 }
 
 //Manhattan Distance Heuristic
-int manhattanDistance(vector<int>initial) {
+int calculateManhattanDistance(vector<int>initial) {
+    int score = 0;
+    if (solved(initial)) //If solved puzzle, 0 manhatten distance
+        return 0;
+    for (unsigned int i = 0; i < initial.size(); ++i) {
+        if (initial.at(i) != 9) { //Skip empty tile
+            if (initial.at(i) != (i + 1)) //If the tile is not in the correct spot
+                cout << "hi" << endl; //Calculate distance//score += 
+        }
+    }
+    return score;
+}
 
+int manhattanDistance(vector<int> initial) {
+    //nodes = MAKE-QUEUE(MAKE-NODE(problem.INITIAL_STATE))
+    priority_queue<Node, vector<Node>, greater<Node>> q; //Priority Queue holding nodes, sorted by heuristic value (lowest to highest)
+    vector<vector<int>> repeatedStates; //Vector holding repeated states
+    q.push(Node(initial,0, calculateManhattanDistance(initial))); //Initial state with depth of 0 pushed into queue
+    //loop do
+    while (true) {
+        //if EMPTY(nodes) then return "failure"
+        if (q.empty()) //Empty queue means solution not found
+            return -1; //Return failure
+        //if problem.GOAL-TEST(node STATE) suceeds then return node
+        else if (solved(q.top().puzzle)){  //If goal state is reached
+            printVector(q.top().puzzle);
+            return q.top().depth; //Return depth of solution if found
+        }
+
+        vector<int> currentPuzzle = q.top().puzzle; //Current puzzle 
+        //node = REMOVE-FRONT(nodes)
+        q.pop(); //Remove current puzzle node
+
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
+            int nodeDepth = q.top().depth;
+            printVector(currentPuzzle);
+            cout << "Depth: " << nodeDepth << endl;
+            cout << "Manhattan Distance Value: " << q.top().value << endl;
+            nodes++; //Counting nodes
+            repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
+
+            int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
+
+            //nodes = QUEUEING-FUNCTION(nodes, EXPAND(nodes, problem.OPERATORS))
+            if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
+                q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 3) { //Possible moves for the blank spot at the 0=3th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
+                q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 4) { //Possible moves for the blank spot at the 4th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 5) { //Possible moves for the blank spot at the 5th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 6) { //Possible moves for the blank spot at the 6th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 7) { //Possible moves for the blank spot at the 7th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
+                q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
+            }
+            else if (blankPosition == 8) { //Possible moves for the blank spot at the 8th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
+            }
+        }
+    }
 }
 
 int main (){
