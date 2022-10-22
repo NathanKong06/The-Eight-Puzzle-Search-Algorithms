@@ -19,7 +19,7 @@ class Node {
             puzzle = puzzles;
             depth = depths;
         } 
-        Node(vector<int> puzzles, int depths, int values){ //Constructor to create a node
+        Node(vector<int> puzzles, int depths, int values){ //Constructor to create a node with heuristic value
             puzzle = puzzles;
             depth = depths;
             value = values;
@@ -358,7 +358,7 @@ int manhattanDistance(vector<int> initial) {
 int main (){
     int userInput;
     vector<int> puzzle;
-    cout << "Enter initial state, 9 for the blank item" << endl;
+    cout << "Enter initial state, 9 for the blank tile" << endl;
     for (unsigned int i = 0; i < 9; ++i) {
         cin >> userInput;
         puzzle.push_back(userInput);
