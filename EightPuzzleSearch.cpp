@@ -101,7 +101,7 @@ int uniformSearch(vector<int>initial) {
             repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
         
             int nodeDepth = q.front().depth;
-            auto blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
+            int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
 
             //nodes = QUEUEING-FUNCTION(nodes, EXPAND(nodes, problem.OPERATORS))
             if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
