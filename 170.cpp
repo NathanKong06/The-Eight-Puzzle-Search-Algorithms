@@ -69,7 +69,7 @@ vector<int> moveRight(vector<int> vect, int blank, int depth) {
 }
 
 //Moves the blank spot left 1 spot
-vector<int> moveLeft(vector<int> vect, int blank, int depth) {
+vector<int> moveLeft(vector<int> vect, int blank, int depth) {\
     swap(vect.at(blank), vect.at(blank-1));
     return vect;
 }
@@ -146,6 +146,8 @@ int uniformSearch(vector<int>initial) {
 //Calculates Misplaced Tile Heuristic
 int calculateMisplacedTile(vector<int>initial) {
     int score = 0;
+    if (solved(initial))
+        return 0;
     for (unsigned int i = 0; i < initial.size(); ++i) {
         if (initial.at(i) != 9) {
             if (initial.at(i) != (i + 1))
@@ -158,8 +160,8 @@ int calculateMisplacedTile(vector<int>initial) {
 //Misplaced Tile Heuristic
 int misplacedTile(vector<int>initial) {
     priority_queue<Node, vector<Node>, greater<Node>> q; //Priority Queue holding nodes, sorted by heuristic value
-    q.push(Node(initial,0, calculateMisplacedTile(initial))); //Initial state with depth of 0 pushed into queue
     vector<vector<int>> repeatedStates; //Vector holding repeated states
+    q.push(Node(initial,0, calculateMisplacedTile(initial))); //Initial state with depth of 0 pushed into queue
     while (true) {
         if (q.empty()) //Empty queue means solution not found
             return -1; //Return failure
@@ -173,9 +175,10 @@ int misplacedTile(vector<int>initial) {
         printVector(currentPuzzle);
         cout << "Depth: " << nodeDepth << endl;
         cout << "Misplaced Tile Value: " << q.top().value << endl;
+        q.pop();
         if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
-
             nodes++; //Counting nodes
+            repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
 
             int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
             if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
@@ -221,7 +224,6 @@ int misplacedTile(vector<int>initial) {
                 q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
             }
         }
-    q.pop();  // Remove front node 
     }
 }
 
