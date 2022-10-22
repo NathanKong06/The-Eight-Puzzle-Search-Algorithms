@@ -23,8 +23,8 @@ class Node {
             value = values;
         } 
 };
-    bool operator<(const Node& first, const Node& second) { 
-        return first.value < second.value; 
+    bool operator>(const Node& first, const Node& second) {  //Overload operator for min heap priority queue
+        return first.value > second.value; 
     }
 
 //Prints out the 8 puzzle, blank spot (represented with a 9) is not printed
@@ -53,32 +53,24 @@ bool solved(vector<int> vec) {
 //Moves the blank spot down 1 spot
 vector<int> moveDown(vector<int> vect, int blank, int depth) {
     swap(vect.at(blank), vect.at(blank+3));
-    printVector(vect);
-    cout << "Depth: " <<  depth << endl;
     return vect;
 }
 
 //Moves the blank spot up 1 spot
 vector<int> moveUp(vector<int> vect, int blank, int depth) {
     swap(vect.at(blank), vect.at(blank-3));
-    printVector(vect);
-    cout << "Depth: " <<  depth << endl;
     return vect;
 }
 
 //Moves the blank spot right 1 spot
 vector<int> moveRight(vector<int> vect, int blank, int depth) {
     swap(vect.at(blank), vect.at(blank+1));
-    printVector(vect);
-    cout << "Depth: " <<  depth << endl;
     return vect;
 }
 
 //Moves the blank spot left 1 spot
 vector<int> moveLeft(vector<int> vect, int blank, int depth) {
     swap(vect.at(blank), vect.at(blank-1));
-    printVector(vect);
-    cout << "Depth: " <<  depth << endl;
     return vect;
 }
 
@@ -96,6 +88,8 @@ int uniformSearch(vector<int>initial) {
         }
 
         vector<int> currentPuzzle = q.front().puzzle; //Current puzzle 
+        printVector(currentPuzzle);
+        cout << "Depth: " << q.front().depth << endl;
         if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
             nodes++; //Counting nodes
             repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
@@ -151,14 +145,21 @@ int uniformSearch(vector<int>initial) {
 
 //Calculates Misplaced Tile Heuristic
 int calculateMisplacedTile(vector<int>initial) {
-
-
+    int score = 0;
+    for (unsigned int i = 0; i < initial.size(); ++i) {
+        if (initial.at(i) != 9) {
+            if (initial.at(i) != (i + 1))
+                score++;
+        }
+    }
+    return score;
 }
 
 //Misplaced Tile Heuristic
 int misplacedTile(vector<int>initial) {
-    priority_queue<Node> q; //Priority Queue holding nodes, sorted by heuristic value
+    priority_queue<Node, vector<Node>, greater<Node>> q; //Priority Queue holding nodes, sorted by heuristic value
     q.push(Node(initial,0, calculateMisplacedTile(initial))); //Initial state with depth of 0 pushed into queue
+    vector<vector<int>> repeatedStates; //Vector holding repeated states
     while (true) {
         if (q.empty()) //Empty queue means solution not found
             return -1; //Return failure
@@ -169,50 +170,56 @@ int misplacedTile(vector<int>initial) {
 
         vector<int> currentPuzzle = q.top().puzzle; //Current puzzle 
         int nodeDepth = q.top().depth;
-        nodes++; //Counting nodes
+        printVector(currentPuzzle);
+        cout << "Depth: " << nodeDepth << endl;
+        cout << "Misplaced Tile Value: " << q.top().value << endl;
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
 
-        int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
-        if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
-            q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 1) { //Possible moves for the blank spot at the 1th position
-            q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 2) { //Possible moves for the blank spot at the 2th position
-            q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 3) { //Possible moves for the blank spot at the 0=3th position
-            q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 4) { //Possible moves for the blank spot at the 4th position
-            q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 5) { //Possible moves for the blank spot at the 5th position
-            q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 6) { //Possible moves for the blank spot at the 6th position
-            q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 7) { //Possible moves for the blank spot at the 7th position
-            q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
-        }
-        else if (blankPosition == 8) { //Possible moves for the blank spot at the 8th position
-            q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
-            q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+            nodes++; //Counting nodes
+
+            int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
+            if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 3) { //Possible moves for the blank spot at the 0=3th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 4) { //Possible moves for the blank spot at the 4th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 5) { //Possible moves for the blank spot at the 5th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveDown(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 6) { //Possible moves for the blank spot at the 6th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 7) { //Possible moves for the blank spot at the 7th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveRight(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition, nodeDepth))));
+            }
+            else if (blankPosition == 8) { //Possible moves for the blank spot at the 8th position
+                q.push(Node(moveUp(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition, nodeDepth))));
+                q.push(Node(moveLeft(currentPuzzle, blankPosition, nodeDepth),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition, nodeDepth))));
+            }
         }
     q.pop();  // Remove front node 
     }
