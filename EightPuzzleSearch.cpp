@@ -270,7 +270,7 @@ int calculateManhattanDistance(vector<int>initial) {
                 incorrectRow = coordinates[i].first; //Current row
                 incorrectColumn = coordinates[i].second; //Current column
                 correctRow = coordinates[initial.at(i)-1].first; //Tile's correct position row
-                correctColumn = coordinates [initial.at(i)-1].second; //Tile's corret position column
+                correctColumn = coordinates [initial.at(i)-1].second; //Tile's correct position column
                 score += abs(correctRow - incorrectRow) + abs(correctColumn - incorrectColumn); //Calculate distance
             }
         }
@@ -358,7 +358,7 @@ int manhattanDistance(vector<int> initial) {
 int main (){
     int userInput;
     vector<int> puzzle;
-    cout << "Enter initial state, 9 for the blank tile" << endl;
+    cout << "Enter initial state, 9 for the blank tile. Valid puzzles only, numbers will be inputted from the 1st to last row." << endl;
     for (unsigned int i = 0; i < 9; ++i) {
         cin >> userInput;
         puzzle.push_back(userInput);
@@ -374,7 +374,7 @@ int main (){
         cout << "Depth: " <<  uniformSearch(puzzle) << endl;
         auto finish = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
-        cout << "Duration: " << duration.count() << " miliseconds" << endl;
+        cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
     }
     else if (userInput == 2) {
@@ -382,7 +382,7 @@ int main (){
         cout << "Depth: " <<  misplacedTile(puzzle) << endl;
         auto finish = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
-        cout << "Duration: " << duration.count() << " miliseconds" << endl;
+        cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
     }
     else if (userInput == 3) {
@@ -390,7 +390,7 @@ int main (){
         cout << "Depth: " <<  manhattanDistance(puzzle) << endl;
         auto finish = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
-        cout << "Duration: " << duration.count() << " miliseconds" << endl;
+        cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
     }
     return 0;
