@@ -108,16 +108,16 @@ int uniformSearch(vector<int>initial) {
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.front().depth + 1));
             }
-            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1th position
+            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1st position
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.front().depth + 1));
             }
-            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2th position
+            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2nd position
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.front().depth + 1));
             }
-            else if (blankPosition == 3) { //Possible moves for the blank spot at the 0=3th position
+            else if (blankPosition == 3) { //Possible moves for the blank spot at the 3rd position
                 q.push(Node(moveUp(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.front().depth + 1));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.front().depth + 1));
@@ -202,16 +202,16 @@ int misplacedTile(vector<int>initial) {
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition))));
             }
-            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1th position
+            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1st position
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition))));
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition))));
             }
-            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2th position
+            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2nd position
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveLeft(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition))));
             }
-            else if (blankPosition == 3) { //Possible moves for the blank spot at the 0=3th position
+            else if (blankPosition == 3) { //Possible moves for the blank spot at the 3rd position
                 q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveUp(currentPuzzle, blankPosition))));
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateMisplacedTile(moveDown(currentPuzzle, blankPosition))));
@@ -262,7 +262,7 @@ int calculateManhattanDistance(vector<int>initial) {
     int incorrectColumn;
     int correctRow;
     int correctColumn;
-    if (solved(initial)) //If solved puzzle, 0 manhatten distance
+    if (solved(initial)) //If solved puzzle, 0 manhattan distance
         return 0;
     for (unsigned int i = 0; i < initial.size(); ++i) {
         if (initial.at(i) != 9) { //Skip empty tile
@@ -313,16 +313,16 @@ int manhattanDistance(vector<int> initial) {
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
             }
-            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1th position
+            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1st position
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
             }
-            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2th position
+            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2nd position
                 q.push(Node(moveLeft(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveLeft(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
             }
-            else if (blankPosition == 3) { //Possible moves for the blank spot at the 0=3th position
+            else if (blankPosition == 3) { //Possible moves for the blank spot at the 3rd position
                 q.push(Node(moveUp(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveUp(currentPuzzle, blankPosition))));
                 q.push(Node(moveRight(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveRight(currentPuzzle, blankPosition))));
                 q.push(Node(moveDown(currentPuzzle, blankPosition),q.top().depth + 1,calculateManhattanDistance(moveDown(currentPuzzle, blankPosition))));
