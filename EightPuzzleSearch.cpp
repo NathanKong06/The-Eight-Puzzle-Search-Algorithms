@@ -18,6 +18,7 @@ class Node {
         Node(vector<int> puzzles, int depths){ //Constructor to create a node
             puzzle = puzzles;
             depth = depths;
+            value = 0;
         } 
         Node(vector<int> puzzles, int depths, int values){ //Constructor to create a node with heuristic value
             puzzle = puzzles;
@@ -189,7 +190,7 @@ int misplacedTile(vector<int>initial) {
         //node = REMOVE-FRONT(nodes)
         q.pop(); //Remove current puzzle node
 
-        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end() && nodeDepth <= 31){ //If not a repeated state
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
             cout << "Misplaced Tile Value: " << misplacedTileValue << endl;
@@ -301,7 +302,7 @@ int manhattanDistance(vector<int> initial) {
         //node = REMOVE-FRONT(nodes)
         q.pop(); //Remove current puzzle node
 
-        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end() && nodeDepth + 1 <= 31){ //If not a repeated state
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
             cout << "Manhattan Distance Value: " << manhattanValue << endl;
@@ -381,7 +382,7 @@ int main (){
     }
     else if (userInput == 2) {
         auto start = std::chrono::high_resolution_clock::now();
-        cout << "Depth: " <<  misplacedTile(puzzle) << endl;
+        misplacedTile(puzzle);
         auto finish = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
         cout << "Duration: " << duration.count() << " milliseconds" << endl;
@@ -389,7 +390,7 @@ int main (){
     }
     else if (userInput == 3) {
         auto start = std::chrono::high_resolution_clock::now();
-        cout << "Depth: " <<  manhattanDistance(puzzle) << endl;
+        manhattanDistance(puzzle);
         auto finish = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
         cout << "Duration: " << duration.count() << " milliseconds" << endl;
