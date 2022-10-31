@@ -8,15 +8,15 @@
 using namespace std;
 
 unsigned int nodes = 0;
-unsigned int maxUniform = 0;
-unsigned int maxMisplaced = 0;
-unsigned int maxManhattan = 0;
+unsigned int maxUniform = 1;
+unsigned int maxMisplaced = 1;
+unsigned int maxManhattan = 1;
 
 class Node {
     public:
         vector<int> puzzle; //Vector containing the 8 puzzle
         int depth; //Depth in the tree
-        int value; //Heuristic value
+        int value; //f(n) value
         
         Node(vector<int> puzzles, int depths){ //Constructor to create a node
             puzzle = puzzles;
