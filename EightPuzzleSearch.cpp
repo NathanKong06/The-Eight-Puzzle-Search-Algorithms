@@ -203,7 +203,6 @@ int misplacedTile(vector<int>initial) {
         if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end() && nodeDepth <= 31){ //If not a repeated state
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
-            cout << "Misplaced Tile Value: " << misplacedTileValue << endl;
             cout << "g(n): " << nodeDepth << endl;
             cout << "h(n): " << misplacedTileValue << endl;
             nodes++; //Counting nodes
@@ -320,7 +319,6 @@ int manhattanDistance(vector<int> initial) {
         if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end() && nodeDepth + 1 <= 31){ //If not a repeated state
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
-            cout << "Manhattan Distance Value: " << manhattanValue << endl;
             cout << "g(n): " << nodeDepth << endl;
             cout << "h(n): " << manhattanValue << endl;
             if (maxManhattan < q.size())
