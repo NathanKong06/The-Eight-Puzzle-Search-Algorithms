@@ -8,6 +8,9 @@
 using namespace std;
 
 unsigned int nodes = 0;
+unsigned int maxUniform = 0;
+unsigned int maxMisplaced = 0;
+unsigned int maxManhattan = 0;
 
 class Node {
     public:
@@ -91,13 +94,18 @@ int uniformSearch(vector<int>initial) {
         //if problem.GOAL-TEST(node STATE) suceeds then return node
         else if (solved(q.front().puzzle)){  //If goal state is reached
             printVector(q.front().puzzle);
+            cout << "Solution Found!" << endl;
             return q.front().depth; //Return depth of solution if found
         }
 
         vector<int> currentPuzzle = q.front().puzzle; //Current puzzle 
         printVector(currentPuzzle);
         cout << "Depth: " << q.front().depth << endl;
+        cout << "g(n): " << q.front().depth << endl;
+        cout << "h(n): 0 " << endl;
         if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
+            if (maxUniform < q.size())
+                maxUniform = q.size();
             nodes++; //Counting nodes
             repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
         
@@ -181,6 +189,7 @@ int misplacedTile(vector<int>initial) {
         //if problem.GOAL-TEST(node STATE) suceeds then return node
         else if (solved(q.top().puzzle)){  //If goal state is reached
             printVector(q.top().puzzle);
+            cout << "Solution Found!" << endl;
             return q.top().depth; //Return depth of solution if found
         }
 
@@ -194,7 +203,11 @@ int misplacedTile(vector<int>initial) {
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
             cout << "Misplaced Tile Value: " << misplacedTileValue << endl;
+            cout << "g(n): " << nodeDepth << endl;
+            cout << "h(n): " << misplacedTileValue << endl;
             nodes++; //Counting nodes
+            if (maxMisplaced < q.size())
+                maxMisplaced = q.size();
             repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
 
             int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
@@ -293,6 +306,7 @@ int manhattanDistance(vector<int> initial) {
         //if problem.GOAL-TEST(node STATE) suceeds then return node
         else if (solved(q.top().puzzle)){  //If goal state is reached
             printVector(q.top().puzzle);
+            cout << "Solution Found!" << endl;
             return q.top().depth; //Return depth of solution if found
         }
 
@@ -306,6 +320,10 @@ int manhattanDistance(vector<int> initial) {
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
             cout << "Manhattan Distance Value: " << manhattanValue << endl;
+            cout << "g(n): " << nodeDepth << endl;
+            cout << "h(n):" << manhattanValue << endl;
+            if (maxManhattan < q.size())
+                maxManhattan = q.size();
             nodes++; //Counting nodes
             repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
 
@@ -379,6 +397,7 @@ int main (){
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
         cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
+        cout << "Max Queue Size: " << maxUniform << endl;
     }
     else if (userInput == 2) {
         auto start = std::chrono::high_resolution_clock::now();
@@ -387,6 +406,8 @@ int main (){
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
         cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
+        cout << "Max Queue Size: " << maxMisplaced << endl;
+
     }
     else if (userInput == 3) {
         auto start = std::chrono::high_resolution_clock::now();
@@ -395,6 +416,7 @@ int main (){
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
         cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
+        cout << "Max Queue Size: " << maxManhattan << endl;
     }
     return 0;
 }
