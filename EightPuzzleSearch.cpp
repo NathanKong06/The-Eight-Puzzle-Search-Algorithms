@@ -200,7 +200,7 @@ int misplacedTile(vector<int>initial) {
         //node = REMOVE-FRONT(nodes)
         q.pop(); //Remove current puzzle node
 
-        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end() && nodeDepth <= 31){ //If not a repeated state
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
             cout << "g(n): " << nodeDepth << endl;
@@ -316,7 +316,7 @@ int manhattanDistance(vector<int> initial) {
         //node = REMOVE-FRONT(nodes)
         q.pop(); //Remove current puzzle node
 
-        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end() && nodeDepth + 1 <= 31){ //If not a repeated state
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
             printVector(currentPuzzle);
             cout << "Depth: " << nodeDepth << endl;
             cout << "g(n): " << nodeDepth << endl;
