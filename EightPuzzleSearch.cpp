@@ -23,7 +23,7 @@ class Node {
             depth = depths;
             value = 0;
         } 
-        Node(vector<int> puzzles, int depths, int values){ //Constructor to create a node with heuristic value
+        Node(vector<int> puzzles, int depths, int values){ //Constructor to create a node with f(n) value
             puzzle = puzzles;
             depth = depths;
             value = values;
