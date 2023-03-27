@@ -11,6 +11,7 @@ unsigned int nodes = 0;
 unsigned int maxUniform = 1;
 unsigned int maxMisplaced = 1;
 unsigned int maxManhattan = 1;
+unsigned int maxManhattanWithAdjacentTile = 1;
 
 class Node {
     public:
@@ -375,6 +376,131 @@ int manhattanDistance(vector<int> initial) {
     }
 }
 
+//Manhattan Distance with Direct Adjacent Tile Reversals Heuristic
+int calculateManhattanDistancewithAdjacentTile(vector<int>initial) {
+    int manhattan = calculateManhattanDistance(initial);
+    int multiplicant = 0;
+    unordered_map<int, int> goal; //Represents goal state
+    goal[0] = 1;
+    goal[1] = 2;
+    goal[2] = 3;
+    goal[3] = 4;
+    goal[4] = 5;
+    goal[5] = 6;
+    goal[6] = 7;
+    goal[7] = 8;
+    goal[8] = 9;
+    //Check vertical adjacent
+    if (initial[0] == goal[3] && initial[3] == goal[0])
+        multiplicant++;
+    if (initial[1] == goal[4] && initial[4] == goal[1])
+        multiplicant++;
+    if (initial[2] == goal[5] && initial[5] == goal[2])
+        multiplicant++;
+    if (initial[3] == goal[6] && initial[6] == goal[3])
+        multiplicant++;
+    if (initial[4] == goal[7] && initial[7] == goal[4])
+        multiplicant++;
+    if (initial[5] == goal[8] && initial[8] == goal[5])
+        multiplicant++;
+    //Check horizontal adjacent
+    if (initial[0] == goal[1] && initial[1] == goal[0])
+        multiplicant++;
+    if (initial[1] == goal[2] && initial[2] == goal[1])
+        multiplicant++;
+    if (initial[3] == goal[4] && initial[4] == goal[3])
+        multiplicant++;
+    if (initial[4] == goal[5] && initial[5] == goal[4])
+        multiplicant++;
+    if (initial[6] == goal[7] && initial[7] == goal[6])
+        multiplicant++;
+    if (initial[7] == goal[8] && initial[8] == goal[7])
+        multiplicant++;
+    return manhattan - 3 * multiplicant;
+}
+
+int manhattanDistancewithAdjacentTile(vector<int> initial) {
+    //nodes = MAKE-QUEUE(MAKE-NODE(problem.INITIAL_STATE))
+    priority_queue<Node, vector<Node>, greater<Node>> q; //Priority Queue holding nodes, sorted by heuristic value (lowest to highest)
+    vector<vector<int>> repeatedStates; //Vector holding repeated states
+    q.push(Node(initial,0, calculateManhattanDistancewithAdjacentTile(initial))); //Initial state with depth of 0 pushed into queue
+    //loop do
+    while (true) {
+        //if EMPTY(nodes) then return "failure"
+        if (q.empty()) //Empty queue means solution not found
+            return -1; //Return failure
+        //if problem.GOAL-TEST(node STATE) suceeds then return node
+        else if (solved(q.top().puzzle)){  //If goal state is reached
+            printVector(q.top().puzzle);
+            cout << "Solution Found!" << endl;
+            return q.top().depth; //Return depth of solution if found
+        }
+
+        vector<int> currentPuzzle = q.top().puzzle; //Current puzzle 
+        int nodeDepth = q.top().depth;
+        int ManhattanDistancewithAdjacentTile = q.top().value;
+        //node = REMOVE-FRONT(nodes)
+        q.pop(); //Remove current puzzle node
+
+        if (find(repeatedStates.begin(), repeatedStates.end(),currentPuzzle) == repeatedStates.end()){ //If not a repeated state
+            printVector(currentPuzzle);
+            cout << "Depth: " << nodeDepth << endl;
+            cout << "g(n): " << nodeDepth << endl;
+            cout << "h(n): " << ManhattanDistancewithAdjacentTile << endl;
+            if (maxManhattanWithAdjacentTile < q.size())
+                maxManhattanWithAdjacentTile = q.size();
+            nodes++; //Counting nodes
+            repeatedStates.push_back(currentPuzzle); //Add state into repeatedStates vector
+
+            int blankPosition = find(currentPuzzle.begin(), currentPuzzle.end(), 9) - currentPuzzle.begin(); //Position of the blank piece
+
+            //nodes = QUEUEING-FUNCTION(nodes, EXPAND(nodes, problem.OPERATORS))
+            if (blankPosition == 0) { //Possible moves for the blank spot at the 0th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition),nodeDepth+ 1,calculateManhattanDistancewithAdjacentTile(moveRight(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveDown(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 1) { //Possible moves for the blank spot at the 1st position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveLeft(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveRight(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveRight(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveDown(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 2) { //Possible moves for the blank spot at the 2nd position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveLeft(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveDown(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 3) { //Possible moves for the blank spot at the 3rd position
+                q.push(Node(moveRight(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveRight(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveUp(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveDown(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 4) { //Possible moves for the blank spot at the 4th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveLeft(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveRight(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveRight(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveUp(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveDown(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 5) { //Possible moves for the blank spot at the 5th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveLeft(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveUp(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveDown(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveDown(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 6) { //Possible moves for the blank spot at the 6th position
+                q.push(Node(moveRight(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveRight(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveUp(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 7) { //Possible moves for the blank spot at the 7th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveLeft(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveRight(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveRight(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveUp(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+            else if (blankPosition == 8) { //Possible moves for the blank spot at the 8th position
+                q.push(Node(moveLeft(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveLeft(currentPuzzle, blankPosition))+ nodeDepth));
+                q.push(Node(moveUp(currentPuzzle, blankPosition),nodeDepth + 1,calculateManhattanDistancewithAdjacentTile(moveUp(currentPuzzle, blankPosition))+ nodeDepth));
+            }
+        }
+    }
+}
+
 int main (){
     int userInput;
     vector<int> puzzle;
@@ -387,7 +513,7 @@ int main (){
     cout << "Initial State" << endl;
     printVector(puzzle);
 
-    cout << "Press 1 for Uniform Cost Search (Skip Repeats), 2 for A* with Misplaced Tile Heuristic, or 3 for A* with Manhattan Distance Heuristic" << endl;
+    cout << "Press 1 for Uniform Cost Search (Skip Repeats), 2 for A* with Misplaced Tile Heuristic, 3 for A* with Manhattan Distance Heuristic, or 4 for A* with Manhattan Distance with Adjancent Tile Heuristic" << endl;
     cin >> userInput;
     if (userInput == 1) {
         auto start = std::chrono::high_resolution_clock::now();
@@ -416,6 +542,15 @@ int main (){
         cout << "Duration: " << duration.count() << " milliseconds" << endl;
         cout << "Nodes: " << nodes << endl;
         cout << "Max Queue Size: " << maxManhattan << endl;
+    }
+    else if (userInput == 4) {
+        auto start = std::chrono::high_resolution_clock::now();
+        cout << "Depth: " << manhattanDistancewithAdjacentTile(puzzle) << endl;
+        auto finish = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
+        cout << "Duration: " << duration.count() << " milliseconds" << endl;
+        cout << "Nodes: " << nodes << endl;
+        cout << "Max Queue Size: " << maxManhattanWithAdjacentTile << endl;
     }
     return 0;
 }
